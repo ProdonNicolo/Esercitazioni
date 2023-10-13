@@ -18,17 +18,17 @@ public class GeneratoreStringhe {
 		
 		JSONArray array = new JSONArray();
 
-		HashMap<String, String> ordiniMap = new HashMap<>();
+		HashMap<String, String> ordiniMap = new HashMap<>();	// creazione mappa degli ordini
 		ordiniMap.put("Chiave", "ORDINI");
 		ordiniMap.put("Valore", "00001");
 		array.add(ordiniMap);
 
-		HashMap<String, String> clientiMap = new HashMap<>();
+		HashMap<String, String> clientiMap = new HashMap<>();	//creazione mappa dei clienti
 		clientiMap.put("Chiave", "CLIENTI");
 		clientiMap.put("Valore", "00001");
 		array.add(clientiMap);
 
-		try (FileWriter file = new FileWriter("dati.json")) {
+		try (FileWriter file = new FileWriter("dati.json")) {	//inizializzazione file 
 			file.write(array.toJSONString());
 			file.flush();
 			System.out.println("File <dati.json> generato con successo\n");
@@ -41,7 +41,7 @@ public class GeneratoreStringhe {
 		String scelta = null;
 		String limit = null;
 	
-		while (scelta != "4") {
+		while (scelta != "4") {	//menu' di scelta per l'utente
 			
 			System.out.println("Per leggere lo stato attuale del file premi 0");
 			System.out.println("Per aggiungere un ordine premi 1");
@@ -76,13 +76,13 @@ public class GeneratoreStringhe {
 			default:
 				System.out.println("\nScelta non valida, riprova.");
 			}
-			array = leggiFileJSON();
+			array = leggiFileJSON();	//lettura da file aggiornata e stampa a video
 			System.out.println("\n"+array+"\n");
 		}
 		sc.close();
 	}
 
-	public static String generaProssimoValore(String chiave) {
+	public static String generaProssimoValore(String chiave) {	//generazione del prossimo valore sia numerico che alfabetico
 		
 		JSONArray array = leggiFileJSON();
 		JSONObject oggetto = null;
@@ -99,7 +99,8 @@ public class GeneratoreStringhe {
 		String valoreCorrente = (String) oggetto.get("Valore");
 		String appoggio = null;
 		
-		if (valoreCorrente.equals("99999")) {
+		if (valoreCorrente.equals("99999")) {	//primo passo per il cambio tipo di generazione
+			
 			valoreCorrente = "";
 			appoggio = "AAAAA";
 		}
@@ -109,7 +110,8 @@ public class GeneratoreStringhe {
 			valoreInt++;
 			prossimoValore = String.format("%05d", valoreInt);
 		} catch (NumberFormatException e) {
-			if (appoggio == "AAAAA") {
+
+		    if (appoggio == "AAAAA") {	//se fallisce la conversione in intero faccio generazione alfabetica
 				prossimoValore = "AAAAA";
 			} else {
 				prossimoValore = generaStringaAlfa(valoreCorrente);
@@ -122,7 +124,7 @@ public class GeneratoreStringhe {
 		}
 
 		oggetto.put("Valore", prossimoValore);
-		array = modificaArrayJSON(array, oggetto);
+		array = modificaArrayJSON(array, oggetto);	//aggiornamento del file json
 
 		try (FileWriter file = new FileWriter("dati.json")) {
 			file.write(array.toJSONString());
@@ -134,7 +136,7 @@ public class GeneratoreStringhe {
 		return prossimoValore;
 	}
 
-	private static JSONArray leggiFileJSON() {
+	private static JSONArray leggiFileJSON() {	//lettura da file json
 		
 		try (FileReader reader = new FileReader("dati.json")) {
 			JSONParser parser = new JSONParser();
@@ -146,7 +148,7 @@ public class GeneratoreStringhe {
 		return new JSONArray();
 	}
 
-	private static JSONArray modificaArrayJSON(JSONArray array, JSONObject oggetto) {
+	private static JSONArray modificaArrayJSON(JSONArray array, JSONObject oggetto) {//aggiornamento del file json
 		
 		JSONArray nuovoArray = new JSONArray();
 		
@@ -167,7 +169,8 @@ public class GeneratoreStringhe {
 		
 		String prossimoValore;
 		
-		if (valoreCorrente.equals("ZZZZZ")) {
+		if (valoreCorrente.equals("ZZZZZ")) {	//gestione del limite massimo, fermo l'aggiunta per evitare eccezioni
+
 			return prossimoValore = "max";
 		} else {
 			
